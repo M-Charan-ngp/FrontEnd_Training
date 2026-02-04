@@ -1,12 +1,14 @@
 <script setup>
 import { ref } from 'vue' 
-const user_list = {
-    '24MCA0010': 'Charan',
-    '24MBA0011': 'Sanjay',
-    '24MCA0001': 'Amal',
-    '24MSC0023': 'Rajesh',
-}
-
+import TableComponent from '@/components/TableComponent.vue'
+const user_list_header = ["Name","Reg No"]
+const user_list = [
+     { reg_no: "24MCA0056", name: "Charan M" },
+    {reg:'24MBA0011', name:'Sanjay'},
+    {reg:'24MCA0001',name:'Amal'},
+    {reg:'24MSC0023',name:'Rajesh'},
+]
+const detailed_user_list_header = ["Reg No", "name","course","college","city"]
 const detailed_user_list = [
   {
     'Reg_no':'24MCA0010', 
@@ -56,42 +58,15 @@ const hide_data = () => {
     <button @click="show_data" :disabled="visible">Show Detailed Table</button>
 
     <div v-if="visible">
-      <table>
-          <thead>
-              <tr>
-                  <th>Register Number</th>
-                  <th>Name</th>
-                  <th>Course</th>
-                  <th>College</th>
-                  <th>City</th>
-              </tr>
-          </thead>
-          <tbody>
-              <tr v-for="values in detailed_user_list">
-                <td>{{ values.Reg_no }}</td>
-                <td>{{ values.Name }}</td>
-                <td>{{ values.College }}</td>
-                <td>{{ values.City }}</td>
-              </tr>
-          </tbody>
-      </table>
+      <TableComponent
+        :headers="detailed_user_list_header",
+        :data="detailed_user_list"/>
+      
     </div>
     <div v-else text-align>
-        <table>
-          <thead>
-              <tr>
-                  <th>Register Number</th>
-                  <th>Name</th>
-
-              </tr>
-          </thead>
-          <tbody>
-              <tr v-for="(value, key) in user_list">
-                  <td>{{ key }}</td>
-                  <td>{{ value }}</td>
-              </tr>
-          </tbody>
-      </table>
+        <TableComponent
+        :headers="user_list_header",
+        :data="user_list"/>
     </div>
   </main>
 </template>
@@ -104,30 +79,7 @@ main {
   place-items: center;  
   width: 100%;
 }
-table {
-  border-collapse:collapse;
-  margin: auto;
-  width: 90%;
-  max-width: 1000px;
-  background-color: white;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  border-radius: 8px;
-  overflow: hidden;
-}
 
-th {
-  background-color: #42b883;
-  color: white;
-  font-weight: 600;
-  text-transform: uppercase;
-  padding: 15px;
-}
-
-td {
-  padding: 10px ;
-  border-bottom: 1px solid #eee;
-  color: #333;
-}
 button {
   background-color: #42b883; 
   color: white;
