@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue' 
-import TableComponent from '@/components/TableComponent.vue'
 const user_list_header = ["Name","Reg No"]
 const user_list = [
      { reg_no: "24MCA0056", name: "Charan M" },

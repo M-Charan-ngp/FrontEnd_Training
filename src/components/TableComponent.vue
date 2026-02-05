@@ -1,6 +1,4 @@
 <script setup>
-import FilterHeader from './FilterHeader.vue';
-
 const props = defineProps({
     headers: {
         type: Array,
@@ -11,6 +9,7 @@ const props = defineProps({
         required: true,
     }
 })
+const emit = defineEmits(['next', 'prev'])
 </script>
 
 <template>
@@ -31,6 +30,10 @@ const props = defineProps({
                 </tr>
             </tbody>
         </table>
+        <div class="pagination">
+            <slot name="pagination">
+            </slot>
+        </div>
     </div>
     <div v-else class="empty-view">
         <h1>No Data Found...</h1>

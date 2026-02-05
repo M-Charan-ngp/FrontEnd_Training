@@ -38,13 +38,12 @@ watch(filters, (newVal) => {
 <style scoped>
 .header-filters {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: end;
+    align-items: end;
     background-color: #ffffff;
     color: white;
     padding: 1rem 2rem;
     border-radius: 8px;
-    margin-bottom: 2rem;
 }
 
 .controls {

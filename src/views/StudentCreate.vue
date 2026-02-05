@@ -1,16 +1,8 @@
 <script setup>
-import TableComponent from '../components/TableComponent.vue'
+
 import { useStudentStore } from '../stores/student'
-import FilterHeader from '@/components/FilterHeader.vue'
 import { reactive, computed, ref, watch } from 'vue'
 const store = useStudentStore()
-
-const updateFilters = (filter) => {
-  console.log("hello")
-    store.search = filter.search
-    store.Sort = filter.sortBy
-}
-const tableHeaders = ['Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mobile No', 'E-mail', 'Course']
 
 const fname = ref("")
 const lname = ref("")
@@ -30,17 +22,6 @@ const student = reactive({
 const fullName = computed(() => (fname.value + ' ' + lname.value).trim())
 watch(fullName, (newVal) => { student.name = newVal })
 
-const totalFields = 7;
-const formProgress = computed(() => {
-    const completedFields = Object.values(student).filter(value => value !== '').length;
-    return Math.round((completedFields / totalFields) * 100);
-});
-
-const progressColor = computed(() => {
-    if (formProgress.value < 50) return '#ff4d4d'; 
-    if (formProgress.value < 100) return '#f1c40f';
-    return '#42b883';
-});
 
 const validateField = (field, value) => {
     if (!value && field !== 'name') return `${field.replace('_', ' ')} is required`
@@ -90,18 +71,11 @@ const handleSubmit = () => {
 </script>
 
 <template>
-    <FilterHeader @filterChange="updateFilters" />
+    
     <div class="container">
       
         <div class="student_form">
         <h1>Add Student</h1>
-        <div class="progress-section">
-            <p>Form Completion: {{ formProgress }}%</p>
-            <div class="progress-container">
-                <div class="progress-bar" :style="{ width: formProgress + '%', backgroundColor: progressColor }"></div>
-            </div>
-        </div>
-
         <form @submit.prevent="handleSubmit">
             <div class="form-group">
                 <label>Register Number:</label>
@@ -159,31 +133,27 @@ const handleSubmit = () => {
             </div>
             <button type="submit">Submit Student</button>
         </form>
-    </div>
-    <TableComponent
-          :headers="tableHeaders" 
-          :data="store.filteredList"
-    />
         </div>
+        <button class="view-table" @click="this.$router.push('/studentdata');">View Student Table</button>
+    </div>
 </template>
 
 <style scoped>
 
-FilterHeader{
-  justify-self: end;
-}
 .container {
   display:flex;
   justify-content: center;
+  flex-direction: column;
   min-width: 100%;
   padding: 20px 20px;
-  background-color: white;
+  background-color: rgb(255, 255, 255);
 }
 
 .student_form {
   background: white;
   flex: 1;
-  padding: 30px;
+  padding-right: 30px;
+  padding-left: 30px;
   border-radius: 12px;
   border-color: #000000;
   width: 100%;
@@ -266,18 +236,7 @@ button {
   font-size: 16px;
   cursor: pointer;
 }
-.progress-container {
-    width: 100%;
-    height: 12px;          
-    background-color: #eee;
-    border-radius: 6px;
-    margin-top: 10px;
-    overflow: hidden;
-}
-.progress-bar {
-    height: 100%;
-}
-.form-group{
-    margin: 20px;
+.class{
+    flex: 2;
 }
 </style>
