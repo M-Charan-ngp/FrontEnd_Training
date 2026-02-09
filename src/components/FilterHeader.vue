@@ -5,7 +5,7 @@ const emit = defineEmits(['filterChange'])
 
 const filters = reactive({
     search: '',
-    sortBy: 'name'
+    sortBy: 'reg_no'
 })
 
 watch(filters, (newVal) => {
@@ -20,7 +20,7 @@ watch(filters, (newVal) => {
                 <input 
                     type="text" 
                     v-model="filters.search" 
-                    placeholder="Search name"
+                    placeholder="Search name/ Reg No."
                     class="search-input"
                 />
             </div>

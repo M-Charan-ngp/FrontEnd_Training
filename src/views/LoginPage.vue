@@ -23,53 +23,55 @@ import RegisterComponent from '@/components/RegisterComponent.vue'
     const toggleLogin = ref(true)
 </script>
 <template>
-    <div class="main">
-        <div class="controlButtons">
-            <button @click="toggleLogin=true" :disabled="toggleLogin">Login </button>
-            <button @click="toggleLogin=false" :disabled="!toggleLogin">Register</button>
-        </div>
-        <div v-if="toggleLogin">
-            <!-- <span>This is the login page</span> -->
-            <LoginComponent @success="directToDashboard" v-model="loginData"></LoginComponent>
-        </div>
-        <div v-else>
-            <!-- <span>This is the register page</span> -->
-            <RegisterComponent @success="handleRegister" v-model="registerData"></RegisterComponent>
-        </div>  
-    </div>
+  <v-container fluid class="fill-height d-flex justify-center align-start pt-16">
+    
+    <div style="width: 100%; max-width: 450px;" class="d-flex flex-column">
+      
+      <div class="d-flex justify-center gap-4 mb-10" style="height: 50px;">
+        <v-btn 
+          :variant="toggleLogin ? 'elevated' : 'outlined'" 
+          color="success"
+          width="140" 
+          @click="toggleLogin = true"
+        >
+          Login
+        </v-btn>
+        
+        <v-btn 
+          :variant="!toggleLogin ? 'elevated' : 'outlined'" 
+          color="success"
+          width="140" 
+          @click="toggleLogin = false"
+        >
+          Register
+        </v-btn>
+      </div>
 
+      <div class="form-container">
+        <LoginComponent 
+          v-if="toggleLogin" 
+          v-model="loginData" 
+          @success="directToDashboard"
+        />
+        <RegisterComponent 
+          v-else 
+          v-model="registerData" 
+          @success="handleRegister"
+        />
+      </div>
+
+    </div>
+  </v-container>
 </template>
 
 <style scoped>
-.main{
-    width: 100%;
-    min-width: 100px;
-}
-.controlButtons {
-    display: flex;
-    justify-content: center; 
-    align-items: center;
-    gap: 40px;
-    margin: 20px 0;
-    width: 100%; 
-}
-button:hover  {
-  background-color: #d1dad6;
-}
-button {
-  background-color: #fafafa; 
-  color: rgb(0, 0, 0);
-  border:1px solid #33a06f;
-  border-radius: 5px;
-  padding: 10px 20px;
-  margin: 10px;
-  font-size: 16px;
-  cursor: pointer;
+/* This ensures that even if the screen is tiny, the buttons don't move */
+.gap-4 {
+  gap: 16px;
 }
 
-button:disabled{
-    background-color: #42b883;
-    color:black;
-    cursor:not-allowed;
+/* Ensure child cards inside components use 100% width */
+:deep(.v-card) {
+  width: 100% !important;
 }
 </style>

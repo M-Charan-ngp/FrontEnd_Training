@@ -6,9 +6,7 @@ import FilterHeader from '@/components/FilterHeader.vue'
 const store = useStudentStore()
 
 const goToNextPage = () => {
-    console.log("Next button clicked! Old page:", store.page);
     store.page++;
-    console.log("New page:", store.page);
 }
 
 const updateFilters = (filter) => {

@@ -17,7 +17,7 @@ export const useStudentStore = defineStore('student', () => {
     const page = ref(0)
     const limit = ref(5)
      const search = ref('')
-     const Sort = ref('name')
+     const Sort = ref('reg_no')
     const addStudent = (student) => {
         studentList.push({ ...student })
     }
@@ -35,7 +35,8 @@ export const useStudentStore = defineStore('student', () => {
         if (search.value) {
             const q = search.value.toLowerCase()
             list = list.filter(s => 
-                s.name.toLowerCase().includes(q)
+                s.name.toLowerCase().includes(q)||
+                s.reg_no.toLowerCase().includes(q)
             )
         }
         list.sort((a, b) => {
@@ -52,7 +53,6 @@ export const useStudentStore = defineStore('student', () => {
     const paginatedList = computed(() => {
     const start = page.value * limit.value;
     const end = start + limit.value;
-    console.log(`Slicing from ${start} to ${end}`); 
     return filteredList.value.slice(start, end);
 });
 

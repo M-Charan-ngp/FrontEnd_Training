@@ -1,18 +1,36 @@
 <script setup>
 import { ref } from 'vue'
-
-const newUser = defineModel({required:true})
+import { vFocus, vCapitalize } from '@/composables/custom_directives.js'
+const newUser = defineModel({ required: true })
 const emit = defineEmits(['success'])
 
 const confirmPassword = ref('')
+const togglepass = ref(false) 
+const toggleconfirmpass = ref(false)
 
+const emailrule = [
+    value => {
+      if (value){
+        if(!/^\S+@\S+\.\S+$/.test(value))
+            return 'Invalid email'
+        return true
+      }  
+      return 'Email is compulsoy.'
+    },
+  ]
+const rule = [
+    value => {
+        if(value) return true
+        return `${value.label} is compulsory`
+    }    
+]
 const handleSubmit = () => {
-    if(!newUser.value.name||!newUser.value.email||!newUser.value.password){
-        alert("please fill all the values")
+    if (!newUser.value.name || !newUser.value.email || !newUser.value.password) {
+        alert("Please fill all the values")
         return
     }
-    if (newUser.value.password !== confirmPassword.value){
-        alert("password do not match!")
+    if (newUser.value.password !== confirmPassword.value) {
+        alert("Passwords do not match!")
         return
     }
     emit('success')
@@ -20,81 +38,71 @@ const handleSubmit = () => {
 </script>
 
 <template>
-    <div class="card">
-        <h2>Register</h2>
-        <form @submit.prevent="handleSubmit">
-            <div class="form-group">
-                <label>Name</label>
-                <input type="text" v-focus v-capitalize v-model="newUser.name">
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" v-model="newUser.email">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" v-model="newUser.password">
-            </div>
-            <div class="form-group">
-                <label>Confirm Password</label>
-                <input type="password" v-model="confirmPassword">
-            </div>
-            <button type="submit" class="auth-btn register">Register</button>
-        </form>
-    </div>
+  <v-card class="mx-auto pa-8 pb-8" elevation="8" min-width="400" rounded="lg">
+    <h2 class="text-h4 font-weight-black text-center mb-6">Register</h2>
+
+    <v-form @submit.prevent="handleSubmit">
+      <v-text-field
+        v-model="newUser.name"
+        v-focus
+        v-capitalize
+        :rules="rule"
+        label="Name"
+        density="compact"
+        placeholder="Full Name"
+        prepend-inner-icon="mdi-account"
+        variant="outlined"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="newUser.email"
+        density="compact"
+        placeholder="johndoe@example.com"
+        :rules="emailrule"
+        label="Email"
+        prepend-inner-icon="mdi-email"
+        variant="outlined"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="newUser.password"
+        :append-inner-icon="togglepass ? 'mdi-eye' : 'mdi-eye-off'"
+        :type="togglepass ? 'text' : 'password'"
+        :rules="rule"
+        density="compact"
+        label="Password"
+        placeholder="Enter your password"
+        prepend-inner-icon="mdi-lock"
+        variant="outlined"
+        @click:append-inner="togglepass = !togglepass"
+      ></v-text-field>
+
+      <v-text-field
+        v-model="confirmPassword"
+        :append-inner-icon="toggleconfirmpass ? 'mdi-eye' : 'mdi-eye-off'"
+        :type="toggleconfirmpass ? 'text' : 'password'"
+        :rules="rule"
+        density="compact"
+        placeholder="Confirm your password"
+        label="Confirm Password"
+        prepend-inner-icon="mdi-lock-check"
+        variant="outlined"
+        @click:append-inner="toggleconfirmpass = !toggleconfirmpass"
+      ></v-text-field>
+
+      <v-btn
+        type="submit"
+        block
+        class="mb-8"
+        color="success"
+        size="large"
+        variant="elevated"
+      >
+        Register
+      </v-btn>
+    </v-form>
+  </v-card>
 </template>
 
 <style scoped>
-h2 {
-    font-size: 1.8rem;
-    font-weight: 800;
-    text-align: center;
-    position: relative;
-    letter-spacing: -0.5px;
-}
-.card {
-    min-width: 400px;
-    max-width: 100%;
-    margin: 1rem auto;
-    padding: 2rem;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-.form-group {
-    margin-bottom: 1.2rem;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-}
-
-label {
-    font-size: 18px;
-    margin-bottom: 2px;
-    color: #000000;
-}
-
-input {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    outline: none;
-}
-
-input:focus {
-    border-color: #42b883;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    background: #42b883;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
 </style>

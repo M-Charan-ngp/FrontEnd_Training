@@ -1,8 +1,7 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, inject, ref, watch } from 'vue'
 import { vFocus, vCapitalize } from '@/composables/custom_directives.js'
 import Header from '@/components/Header.vue'
-
 const emit = defineEmits(['submit'])
 
 
@@ -137,14 +136,14 @@ const handleSubmit = () => {
 <style scoped>
 .student_form {
   background: white;
-  flex: 1;
   padding-right: 30px;
   padding-left: 30px;
   border-radius: 12px;
+  justify-content: center;
+  align-items: center;
   border-color: #000000;
-  width: 100%;
   min-width: 400px;
-  max-width: 1200px;
+  max-width: 700px;
 }
 h1 {
   color: #2c3e50;
@@ -202,7 +201,6 @@ button {
   cursor: pointer;
   transition: background 0.3s;
   margin-top: 10px;
-  margin: 10px;
 }
 .radio_group label {
   font-weight: normal;

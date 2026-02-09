@@ -1,20 +1,23 @@
 <script setup>
-    
+import { inject } from 'vue'
+
+const title = inject('title')
+const theme = inject('theme')
 </script>
 
 <template>
     <div class="header">
-        <h1>Common Frontend</h1>
+        <h1>{{ title }}</h1>
     </div>
 </template>
 
 <style scoped>
 .header {
-  background-color: #42b883;
+  background-color: v-bind(theme);
   color: white;
   width: 100%;
-
-  padding: 10px 0 10px 0px;
+  
+  padding: 10px 10px 10px 10px;
   text-align: center;
 }
 </style>
