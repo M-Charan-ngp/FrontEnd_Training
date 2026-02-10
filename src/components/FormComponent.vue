@@ -65,12 +65,18 @@ const handleSubmit = () => {
         formSubmitted.value = false
     }
 }
+watch(() => student.value, (newVal) => {
+    if (newVal && newVal.name && !fname.value && !lname.value) {
+        const parts = newVal.name.trim().split(' ')
+        fname.value = parts[0] || ''
+        lname.value = parts.slice(1).join(' ') || ''
+    }
+}, { immediate: true, deep: true })
 </script>
 
 <template>
     <Header></Header>
     <div class="student_form" v-if="student">
-        <h1>Add Student</h1>
         <form @submit.prevent="handleSubmit">
             <div class="form-group">
                 <label>Register Number:</label>

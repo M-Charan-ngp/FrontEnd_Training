@@ -65,12 +65,10 @@ import RegisterComponent from '@/components/RegisterComponent.vue'
 </template>
 
 <style scoped>
-/* This ensures that even if the screen is tiny, the buttons don't move */
 .gap-4 {
   gap: 16px;
 }
 
-/* Ensure child cards inside components use 100% width */
 :deep(.v-card) {
   width: 100% !important;
 }

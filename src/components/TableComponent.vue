@@ -9,34 +9,34 @@ const props = defineProps({
         required: true,
     }
 })
-const emit = defineEmits(['next', 'prev'])
+const emit = defineEmits(['next', 'prev', 'request-delete', 'request-update'])
 </script>
 
 <template>
     <div class="table-view" v-if="data.length > 0">
-        <table>
+        <v-table>
             <thead>
                 <tr>
-                    <th v-for="header in headers" :key="header">
-                        {{ header.toUpperCase() }}
-                    </th>
+                    <th v-for="header in headers" :key="header">{{ header }}</th>
+                    <th>Delete</th> 
+                    <th>Edit</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="(row, index) in data" :key="index">
-                    <td v-for="(,key) in row">
-                        {{ row[key] }}
+                <tr v-for="row in data" :key="row.id">
+                    <td v-for="(value) in row">{{ value }}</td>
+                    <td>
+                        <v-btn icon="mdi-delete" color="red" variant="text" @click="$emit('request-delete', row)" />
+                    </td>
+                    <td>
+                        <v-btn icon="mdi-pencil" color="green" variant="text" @click="$emit('request-update', row)" />
                     </td>
                 </tr>
-            </tbody>
-        </table>
+    </tbody>
+        </v-table>
         <div class="pagination">
-            <slot name="pagination">
-            </slot>
+            <slot name="pagination"></slot>
         </div>
-    </div>
-    <div v-else class="empty-view">
-        <h1>No Data Found...</h1>
     </div>
 </template>
 

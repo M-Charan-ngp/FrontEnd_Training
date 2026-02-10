@@ -19,9 +19,10 @@ const router = createRouter({
       component: CounterView
     },
     {
-      path: '/create',
-      name:'Create Student',
-      component: StudentCreate
+      path: '/student-form/:id?',
+      name:'StudentForm',
+      component: StudentCreate,
+      props: true
     },
     {
       path: '/studentdata',

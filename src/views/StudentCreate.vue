@@ -1,12 +1,20 @@
 <script setup>
 
 import { useStudentStore } from '../stores/student'
-import { ref, provide } from 'vue'
+import { ref, provide, onMounted, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 const store = useStudentStore()
 import FormComponent from '@/components/FormComponent.vue'
+
+
 const themeColor = ref('#42b883')
-provide('title','Form Application')
+const isEditMode = ref(false)
+const dynamicTitle = computed(() => isEditMode.value ? 'Edit Student' : 'Add Student')
 provide('theme', themeColor)
+provide('title',dynamicTitle)
+
+const route = useRoute()
+const router = useRouter()
 
 const studentData = ref({
     reg_no: '',
@@ -17,13 +25,31 @@ const studentData = ref({
     email: '',
     course: ''
 })
+
+onMounted(() => {
+    const id = route.params.id
+    if (id) {
+        const existing = store.studentList.find(s => s.id === parseInt(id))
+        if (existing) {
+            studentData.value = JSON.parse(JSON.stringify(existing))
+            isEditMode.value = true
+        }
+    }
+})
+
 const toggleTheme = () => {
     themeColor.value = themeColor.value === '#42b883' ? '#35495e' : '#42b883'
 }
 const onFormSubmit = () => {
-    store.addStudent(studentData.value)
-    alert("Student added successfully!")
-    student.value = { reg_no: '', name: '', gender: '', dob: '', phone: '', email: '', course: '' }
+    if (isEditMode.value) {
+
+      store.updateStudent(studentData.value)
+      alert("Student updated!")
+    } else {
+      store.addStudent(studentData.value)
+        alert("Student added!")
+    }
+    router.push('/studentdata')
 }
 </script>
 

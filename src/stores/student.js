@@ -3,24 +3,41 @@ import { ref, computed,reactive } from 'vue'
 
 export const useStudentStore = defineStore('student', () => {
     const studentList = reactive([
-        { reg_no: "24MCA0060", name: "Charan M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
-        { reg_no: "24MCA0059", name: "Sanjay M", gender: "Male", dob: "2003-09-09", phone: "9876544211", email: "sanjay@gmail.com", course: "MSC" },
-        { reg_no: "24MCA0058", name: "Rajesh M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "rajesh@gmail.com", course: "MCA" },
-        { reg_no: "24MCA0057", name: "Amal M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
-        { reg_no: "24MCA0056", name: "Gokul M", gender: "Male", dob: "2003-09-09", phone: "9876544211", email: "sanjay@gmail.com", course: "MSC" },
-        { reg_no: "24MCA0055", name: "jackie chan", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "rajesh@gmail.com", course: "MCA" },
-        { reg_no: "24MCA0054", name: "Velan M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
-        { reg_no: "24MCA0053", name: "Ram M", gender: "Male", dob: "2003-09-09", phone: "9876544211", email: "sanjay@gmail.com", course: "MSC" },
-        { reg_no: "24MCA0052", name: "Sam M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "rajesh@gmail.com", course: "MCA" },
-        { reg_no: "24MCA0051", name: "Ganesh M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
+        { id:1, reg_no: "24MCA0051", name: "Charan M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
+        { id:2, reg_no: "24MCA0052", name: "Sanjay M", gender: "Male", dob: "2003-09-09", phone: "9876544211", email: "sanjay@gmail.com", course: "MSC" },
+        { id:3, reg_no: "24MCA0053", name: "Rajesh M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "rajesh@gmail.com", course: "MCA" },
+        { id:4, reg_no: "24MCA0054", name: "Amal M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
+        { id:5, reg_no: "24MCA0055", name: "Gokul M", gender: "Male", dob: "2003-09-09", phone: "9876544211", email: "sanjay@gmail.com", course: "MSC" },
+        { id:6, reg_no: "24MCA0056", name: "jackie chan", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "rajesh@gmail.com", course: "MCA" },
+        { id:7, reg_no: "24MCA0057", name: "Velan M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
+        { id:8, reg_no: "24MCA0058", name: "Ram M", gender: "Male", dob: "2003-09-09", phone: "9876544211", email: "sanjay@gmail.com", course: "MSC" },
+        { id:9, reg_no: "24MCA0059", name: "Sam M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "rajesh@gmail.com", course: "MCA" },
+        { id:10, reg_no: "24MCA0060", name: "Ganesh M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
     ])
     const page = ref(0)
     const limit = ref(5)
      const search = ref('')
      const Sort = ref('reg_no')
     const addStudent = (student) => {
-        studentList.push({ ...student })
+        const nextId = studentList.length > 0 
+            ? Math.max(...studentList.map(s => s.id)) + 1 
+            : 1
+            
+        studentList.push({ id: nextId,...student })
     }
+
+    const updateStudent = (updatedStudent) => {
+        const index = studentList.findIndex(s => s.id === updatedStudent.id)
+        if (index !== -1) {
+            studentList[index] = { ...updatedStudent }
+        }
+    }
+    const removeStudent = (studentId) => {
+        const index = studentList.findIndex(student => student.id === studentId);
+        if (index !== -1) {
+            studentList.splice(index, 1);
+        }
+    };
 
     const totalPages = computed(() => {
         const totalStudents = filteredList.value.length; 
@@ -58,6 +75,8 @@ export const useStudentStore = defineStore('student', () => {
 
     return {
         studentList,
+        updateStudent,
+        removeStudent,
         search,
         Sort, 
         addStudent,

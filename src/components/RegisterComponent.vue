@@ -7,7 +7,7 @@ const emit = defineEmits(['success'])
 const confirmPassword = ref('')
 const togglepass = ref(false) 
 const toggleconfirmpass = ref(false)
-
+const items=['User','Admin']
 const emailrule = [
     value => {
       if (value){
@@ -15,7 +15,7 @@ const emailrule = [
             return 'Invalid email'
         return true
       }  
-      return 'Email is compulsoy.'
+      return 'Email is compulsory.'
     },
   ]
 const rule = [
@@ -89,7 +89,10 @@ const handleSubmit = () => {
         variant="outlined"
         @click:append-inner="toggleconfirmpass = !toggleconfirmpass"
       ></v-text-field>
-
+      <v-select
+        :items="items"
+        label="Role"
+      ></v-select>
       <v-btn
         type="submit"
         block
@@ -103,6 +106,3 @@ const handleSubmit = () => {
     </v-form>
   </v-card>
 </template>
-
-<style scoped>
-</style>

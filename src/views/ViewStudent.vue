@@ -1,12 +1,31 @@
 <script setup>
+import {ref} from 'vue'
 import { useStudentStore } from '../stores/student'
-
 import FilterHeader from '@/components/FilterHeader.vue'
+import Dialog from '@/components/Dialog.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const store = useStudentStore()
-
+const handleUpdateRequest = (student) => {
+    router.push({ 
+        name: 'StudentForm', 
+        params: { id: student.id } 
+    })
+}  
 const goToNextPage = () => {
     store.page++;
+}
+const isDeleteDialogOpen = ref(false)
+const selectedStudent = ref(null)
+
+const handleRequestDelete = (student) => {
+    selectedStudent.value = student
+    isDeleteDialogOpen.value = true
+}
+
+const handleConfirmDelete = (student) => {
+    store.removeStudent(student.id)
 }
 
 const updateFilters = (filter) => {
@@ -17,7 +36,7 @@ const updateFilters = (filter) => {
 const goToPrevPage = () => {
     store.page--;
 }
-const tableHeaders = ['Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mobile No', 'E-mail', 'Course']
+const tableHeaders = ['id', 'Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mobile No', 'E-mail', 'Course']
 </script>
 
 <template>
@@ -31,6 +50,8 @@ const tableHeaders = ['Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mobile N
             :total-pages="store.totalPages" 
             @prev="goToPrevPage"
             @next="goToNextPage"
+            @request-delete="handleRequestDelete"
+            @request-update="handleUpdateRequest"
         >
             <template #pagination="" class="paginate">
                 <button @click="goToPrevPage" :disabled="store.page <= 0" class="page-btn">Prev</button>
@@ -38,6 +59,20 @@ const tableHeaders = ['Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mobile N
                 <button @click="goToNextPage" :disabled="store.page >= store.totalPages - 1" class="page-btn">Next</button>
             </template>
     </TableComponent>
+    <Dialog 
+        v-model:show="isDeleteDialogOpen"
+        v-model:item="selectedStudent"
+        title="Delete Student"
+        confirm-text="Delete"
+        confirm-color="red"
+        @confirm="handleConfirmDelete"
+    >
+    
+        <template #default="{ item }">
+            Are you sure you want to delete <b>{{ item.name }}</b>? 
+            This will remove them from the {{ item.course }} course list.
+        </template>
+    </Dialog>
     
     </main>
     
