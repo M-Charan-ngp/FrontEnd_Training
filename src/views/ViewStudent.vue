@@ -4,6 +4,8 @@ import { useStudentStore } from '../stores/student'
 import FilterHeader from '@/components/FilterHeader.vue'
 import Dialog from '@/components/Dialog.vue'
 import { useRouter } from 'vue-router'
+import Header from '../components/Header.vue'
+
 
 const router = useRouter()
 const store = useStudentStore()
@@ -42,7 +44,8 @@ const tableHeaders = ['id', 'Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mo
 <template>
 
     <main>
-        <FilterHeader @filterChange="updateFilters" />
+          <Header class="mb-16"></Header>
+        <FilterHeader class="mt-16 pt-13" @filterChange="updateFilters" />
         <TableComponent
             :headers="tableHeaders" 
             :data="store.paginatedList"

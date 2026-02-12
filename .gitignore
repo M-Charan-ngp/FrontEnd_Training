@@ -23,9 +23,7 @@ coverage
 *.njsproj
 *.sln
 *.sw?
-
 *.tsbuildinfo
-
 .eslintcache
 
 # Cypress
@@ -37,3 +35,4 @@ __screenshots__/
 
 # Vite
 *.timestamp-*-*.mjs
+.env

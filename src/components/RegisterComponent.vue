@@ -7,7 +7,7 @@ const emit = defineEmits(['success'])
 const confirmPassword = ref('')
 const togglepass = ref(false) 
 const toggleconfirmpass = ref(false)
-const items=['User','Admin']
+const items=['user','admin']
 const emailrule = [
     value => {
       if (value){
@@ -90,6 +90,7 @@ const handleSubmit = () => {
         @click:append-inner="toggleconfirmpass = !toggleconfirmpass"
       ></v-text-field>
       <v-select
+        v-model="newUser.role"
         :items="items"
         label="Role"
       ></v-select>

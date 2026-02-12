@@ -10,7 +10,7 @@ import FormComponent from '@/components/FormComponent.vue'
 const themeColor = ref('#42b883')
 const isEditMode = ref(false)
 const dynamicTitle = computed(() => isEditMode.value ? 'Edit Student' : 'Add Student')
-provide('theme', themeColor)
+provide('themeColor',themeColor)
 provide('title',dynamicTitle)
 
 const route = useRoute()
@@ -37,9 +37,7 @@ onMounted(() => {
     }
 })
 
-const toggleTheme = () => {
-    themeColor.value = themeColor.value === '#42b883' ? '#35495e' : '#42b883'
-}
+
 const onFormSubmit = () => {
     if (isEditMode.value) {
 
@@ -55,10 +53,9 @@ const onFormSubmit = () => {
 
 <template>
     
-    <div class="container">
-      <button @click="toggleTheme" class="theme-btn">Switch Theme</button>
+    <div class="d-flex justify-center flex-row pa-16">
         <FormComponent v-model="studentData" @submit="onFormSubmit" />
-        <button class="view-table" @click="this.$router.push('/studentdata');">View Student Table</button>
+       
     
     </div>
 </template>

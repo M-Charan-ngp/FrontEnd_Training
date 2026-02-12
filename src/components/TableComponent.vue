@@ -11,72 +11,72 @@ const props = defineProps({
 })
 const emit = defineEmits(['next', 'prev', 'request-delete', 'request-update'])
 </script>
-
 <template>
-    <div class="table-view" v-if="data.length > 0">
-        <v-table>
+    <v-card v-if="data.length > 0" class="table-card elevation-2">
+        <v-table hover fixed-header density="comfortable">
             <thead>
                 <tr>
-                    <th v-for="header in headers" :key="header">{{ header }}</th>
-                    <th>Delete</th> 
-                    <th>Edit</th>
+                    <th 
+                        v-for="header in headers" 
+                        :key="header" 
+                        class="text-uppercase font-weight-bold bg-success text-white"
+                    >
+                        {{ header }}
+                    </th>
+                    <th class="text-uppercase font-weight-bold bg-success text-white text-center">Delete</th> 
+                    <th class="text-uppercase font-weight-bold bg-success text-white text-center">Edit</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="row in data" :key="row.id">
-                    <td v-for="(value) in row">{{ value }}</td>
-                    <td>
-                        <v-btn icon="mdi-delete" color="red" variant="text" @click="$emit('request-delete', row)" />
+                    <td v-for="(value, key) in row" :key="key" class="text-truncate" style="max-width: 200px;">
+                        {{ value }}
                     </td>
-                    <td>
-                        <v-btn icon="mdi-pencil" color="green" variant="text" @click="$emit('request-update', row)" />
+                    <td class="text-center">
+                        <v-btn 
+                            icon="mdi-delete" 
+                            color="error" 
+                            variant="text" 
+                            @click="$emit('request-delete', row)" 
+                        />
+                    </td>
+                    <td class="text-center">
+                        <v-btn 
+                            icon="mdi-pencil" 
+                            color="success" 
+                            variant="text" 
+                            @click="$emit('request-update', row)" 
+                        />
                     </td>
                 </tr>
-    </tbody>
+            </tbody>
         </v-table>
-        <div class="pagination">
+
+        <v-divider></v-divider>
+        <div class="d-flex justify-center pa-4">
             <slot name="pagination"></slot>
         </div>
-    </div>
+    </v-card>
+
+    <v-sheet v-else class="d-flex align-center justify-center pa-10 text-center" color="grey-lighten-4" border>
+        <div>
+            <v-icon icon="mdi-database-off" size="large" color="grey" class="mb-2"></v-icon>
+            <p class="text-grey">No data available to display.</p>
+        </div>
+    </v-sheet>
 </template>
 
 <style scoped>
-table {
-  border-collapse:collapse;
-  margin: auto;
-  width: 100%;
-  max-width: 1200px;
-  background-color: white;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-  min-width: 700px;
-  border-radius: 8px;
-  overflow: hidden;
-}
 
-th {
-  background-color: #42b883;
-  color: white;
-  font-weight: 600;
-  text-transform: uppercase;
-  padding: 15px;
-}
-.table-view{
-    flex:2;
+.table-card {
+    flex: 2;
     margin-left: 20px;
     min-width: 600px;
-}
-.empty-view{
-    flex:2;
-    margin-left: 20px;
-    min-width: 600px;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
-td {
-  padding: 10px ;
-  border-bottom: 1px solid #eee;
-  align-items: center;
-  word-break: break-all;
-  max-width: 700px;
-  color: #333;
+:deep(thead th) {
+    height: 50px !important;
 }
 </style>

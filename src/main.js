@@ -11,6 +11,7 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import '@mdi/font/css/materialdesignicons.css'
 import 'unfonts.css'
+import { useAuthStore } from './stores/AuthStore'
 
 const app = createApp(App)
 
@@ -22,6 +23,8 @@ const vuetify = createVuetify({
 
 app.component('TableComponent', TableComponent);
 app.use(createPinia())
+const authStore = useAuthStore()
+authStore.init()
 app.use(router)
 app.directive('focus', vFocus)
 app.directive('capitalize', vCapitalize)
