@@ -1,11 +1,12 @@
 <script setup>
-import { vFocus, vCapitalize } from '@/composables/custom_directives.js'
+import { vFocus } from '@/composables/custom_directives.js'
 import { useAuthStore } from '../stores/AuthStore'
+import { computed } from 'vue'
 const emit = defineEmits(['success'])
 const credentials = defineModel({ required: true })
 
-const authstore = useAuthStore()
-
+const authStore = useAuthStore()
+const themeColor = computed(() => authStore.themeColor)
 const emailrule = [
     value => {
       if (value){
@@ -66,7 +67,7 @@ const handlesubmit = () => {
 
             <v-btn
                 type="submit"
-                color="success"
+                :color="themeColor"
                 size="large"
                 variant="elevated"
                 block

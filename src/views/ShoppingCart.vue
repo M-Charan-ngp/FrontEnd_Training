@@ -1,6 +1,7 @@
 <script setup>
 import { ref,reactive, computed, watch } from 'vue'
 import Header from '../components/Header.vue'
+import { limitValue } from '../utils/limitValue'
 
 const products = reactive([
     { id: 1, name: 'Milk Bikis', price: 15, quantity: 0 },
@@ -11,12 +12,7 @@ const products = reactive([
 ])
 const discountPercent = ref(0)
 const taxPercent = ref(0)
-const limitValue = (val, min, max) => {
-    if (val === null || val === undefined || val < min || val > max) {
-        return 0
-    }
-    return val 
-}
+
 
 const Total = computed(() => {
     return (products.reduce((acc, item) => acc + (item.price * item.quantity), 0)).toFixed(2)

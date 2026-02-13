@@ -1,9 +1,13 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useAuthStore } from '../stores/AuthStore'
 import { vFocus, vCapitalize } from '@/composables/custom_directives.js'
+
+
 const newUser = defineModel({ required: true })
 const emit = defineEmits(['success'])
-
+const authStore = useAuthStore()
+const themeColor = computed(() => authStore.themeColor)
 const confirmPassword = ref('')
 const togglepass = ref(false) 
 const toggleconfirmpass = ref(false)
@@ -98,7 +102,7 @@ const handleSubmit = () => {
         type="submit"
         block
         class="mb-8"
-        color="success"
+        :color="themeColor"
         size="large"
         variant="elevated"
       >

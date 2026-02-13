@@ -1,14 +1,11 @@
 <script setup>
-import {ref} from 'vue'
+import { ref, computed } from 'vue'
 import LoginComponent from '@/components/LoginComponent.vue'
 import RegisterComponent from '@/components/RegisterComponent.vue'
-import apiService from '../services/apiServices'
-import { jwtDecode } from 'jwt-decode'
 import {useRouter } from 'vue-router'
-import Header from '../components/Header.vue'
 import { useAuthStore } from '../stores/AuthStore'
 const authStore = useAuthStore()
-
+const themeColor = computed(() => authStore.themeColor)
 const router = useRouter()
     const loginData = ref({
         email: '',
@@ -24,42 +21,25 @@ const router = useRouter()
 
 
 const handleLogin = async () => {
-    try {
-        const response = await apiService.auth.login(loginData.value);
-        const token = response.token || response.data?.token;
-
-        if (!token) {
-            throw new Error("Token not found in server response");
-        }
-        authStore.saveLogin(token);
-        const userRole = authStore.user?.role;
-        router.push(userRole === 'admin' ? '/studentdata' : '/cart');
-
-        alert(`Welcome back, ${authStore.user?.name || 'User'}!`);
-
-    } catch (err) {
-        console.error("Login Error:", err);
-        const message = err.response?.data?.message || err.response?.data?.error || "Login failed";
-        alert(message);
+    const result = await authStore.login(loginData.value);
+    
+    if (result.success) {
+        alert(`Welcome back, ${result.user.name}!`);
+        router.push(result.user.role === 'admin' ? '/student-form' : '/studentdata');
+    } else {
+        alert(result.error);
     }
 }
+
 const handleRegister = async () => {
-    try {
-        const response = await apiService.auth.signup({ ...registerData.value });
-        
-        alert(response.data?.message || 'Registration successful! Please login.');
+    const result = await authStore.register({ ...registerData.value });
+    
+    if (result.success) {
+        alert(result.message);
         toggleLogin.value = true;
         registerData.value = { name: '', email: '', password: '', role: 'user' };
-
-    } catch (err) {
-        console.error("Registration Error:", err);
-        if (err.response?.status === 401) {
-            alert("System Error: " + (err.response.data.error || "Invalid API Key"));
-        } else if (err.response?.status === 400 || err.response?.status === 422) {
-            alert(err.response.data?.message || "This email is already registered.");
-        } else {
-            alert("Connection error. Please try again later.");
-        }
+    } else {
+        alert(result.error);
     }
 }
     const toggleLogin = ref(true)
@@ -72,7 +52,7 @@ const handleRegister = async () => {
       <div class="d-flex justify-center gap-4 mb-10" style="height: 50px;">
         <v-btn 
           :variant="toggleLogin ? 'elevated' : 'outlined'" 
-          color="success"
+          :color="themeColor"
           width="140" 
           @click="toggleLogin = true"
         >
@@ -81,7 +61,7 @@ const handleRegister = async () => {
         
         <v-btn 
           :variant="!toggleLogin ? 'elevated' : 'outlined'" 
-          color="success"
+          :color="themeColor"
           width="140" 
           @click="toggleLogin = false"
         >

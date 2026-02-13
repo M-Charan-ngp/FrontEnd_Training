@@ -27,7 +27,7 @@ const router = createRouter({
       name:'StudentForm',
       component: StudentCreate,
       props: true,
-      beforeEnter: [adminMiddleware]
+      beforeEnter: [authMiddleware, adminMiddleware]
     },
     {
       path: '/studentdata',

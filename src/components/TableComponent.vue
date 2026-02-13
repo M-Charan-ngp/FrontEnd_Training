@@ -1,4 +1,7 @@
 <script setup>
+import { computed } from 'vue' 
+import { useAuthStore } from '../stores/AuthStore';
+const authStore = useAuthStore();
 const props = defineProps({
     headers: {
         type: Array,
@@ -9,6 +12,7 @@ const props = defineProps({
         required: true,
     }
 })
+const themeColor = computed(() => authStore.themeColor)
 const emit = defineEmits(['next', 'prev', 'request-delete', 'request-update'])
 </script>
 <template>
@@ -19,12 +23,12 @@ const emit = defineEmits(['next', 'prev', 'request-delete', 'request-update'])
                     <th 
                         v-for="header in headers" 
                         :key="header" 
-                        class="text-uppercase font-weight-bold bg-success text-white"
-                    >
-                        {{ header }}
+                        class="text-uppercase font-weight-bold text-white"
+                        :style="{ backgroundColor: themeColor }"
+                    >                 {{ header }}
                     </th>
-                    <th class="text-uppercase font-weight-bold bg-success text-white text-center">Delete</th> 
-                    <th class="text-uppercase font-weight-bold bg-success text-white text-center">Edit</th>
+                    <th class="text-uppercase font-weight-bold text-white text-center" :style="{ backgroundColor: themeColor }">Delete</th> 
+                    <th class="text-uppercase font-weight-bold text-white text-center" :style="{ backgroundColor: themeColor }">Edit</th>
                 </tr>
             </thead>
             <tbody>

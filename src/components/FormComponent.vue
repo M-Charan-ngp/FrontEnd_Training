@@ -2,7 +2,10 @@
 import { computed, ref, watch, onMounted } from 'vue'
 import Header from '@/components/Header.vue'
 import { useDepartmentStore } from '../stores/department'
+import { useAuthStore } from '../stores/AuthStore'
 
+const authStore = useAuthStore()
+const themeColor = computed(() => authStore.themeColor)
 const deptStore = useDepartmentStore()
 onMounted(() => {
     deptStore.fetchDepartments()
@@ -121,7 +124,7 @@ const handleSubmit = async () => {
             <v-btn 
                 type="submit" 
                 block 
-                color="#42b883" 
+                :color="themeColor"
                 size="large" 
                 class="mt-4 text-white font-weight-bold"
             >

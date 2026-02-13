@@ -25,6 +25,9 @@ const handleLogout = () => {
 const navigateToTable = () => {
   router.push('/studentdata')
 }
+const navigateToForm = () => {
+  router.push('/student-form')
+}
 </script>
 
 <template >
@@ -37,6 +40,14 @@ const navigateToTable = () => {
       @click="navigateToTable"
     >
       View Student
+    </v-btn>
+    <v-btn 
+      variant="outlined" 
+      class="ml-2"
+      rounded="pill"
+      @click="navigateToForm"
+    >
+      Create Student
     </v-btn>
 
     <v-app-bar-title class="text-center mr-16 text-h4">
