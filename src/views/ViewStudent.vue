@@ -1,14 +1,25 @@
 <script setup>
-import {onMounted, ref} from 'vue'
+import {onMounted, ref, computed} from 'vue'
 import { useStudentStore } from '../stores/student'
+import { useAuthStore } from '../stores/AuthStore'
 import FilterHeader from '@/components/FilterHeader.vue'
 import Dialog from '@/components/Dialog.vue'
 import { useRouter } from 'vue-router'
+import ViewCourseDialog from '../components/ViewCourseDialog.vue'
 import Header from '../components/Header.vue'
 
+const courseDialog = ref(false)
+const activeStudentId = ref(null)
+
+const handleViewCourses = (student) => {
+  activeStudentId.value = student.id
+  courseDialog.value = true
+}
 
 const router = useRouter()
 const store = useStudentStore()
+const authStore = useAuthStore()
+const themeColor = computed(() => authStore.themeColor)
 const handleUpdateRequest = (student) => {
     router.push({ 
         name: 'StudentForm', 
@@ -69,6 +80,7 @@ const tableHeaders = ['id', 'Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mo
             @next="goToNextPage"
             @request-delete="handleRequestDelete"
             @request-update="handleUpdateRequest"
+            @view-courses="handleViewCourses"
         >
             <template #pagination="" class="paginate">
                 <button @click="goToPrevPage" :disabled="store.page <= 1" class="page-btn">Prev</button>
@@ -90,6 +102,11 @@ const tableHeaders = ['id', 'Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mo
             This will remove them from the <strong>{{ item.departmentInfo?.name }}</strong> department records.
         </template>
     </Dialog>
+    <ViewCourseDialog 
+      v-model="courseDialog"
+      :student-id="activeStudentId"
+      :theme-color="themeColor"
+    />
     
     </main>
     
@@ -102,7 +119,7 @@ const tableHeaders = ['id', 'Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mo
 .page-btn {
     margin: 10px;
     padding: 8px 18px;
-    background-color: #42b883; 
+    background-color: v-bind(themeColor);
     color: white;
     border: none;
     border-radius: 5px;

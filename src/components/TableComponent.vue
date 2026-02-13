@@ -13,7 +13,7 @@ const props = defineProps({
     }
 })
 const themeColor = computed(() => authStore.themeColor)
-const emit = defineEmits(['next', 'prev', 'request-delete', 'request-update'])
+const emit = defineEmits(['next', 'prev', 'request-delete', 'request-update','view-courses'])
 </script>
 <template>
     <v-card v-if="data.length > 0" class="table-card elevation-2">
@@ -27,8 +27,24 @@ const emit = defineEmits(['next', 'prev', 'request-delete', 'request-update'])
                         :style="{ backgroundColor: themeColor }"
                     >                 {{ header }}
                     </th>
-                    <th class="text-uppercase font-weight-bold text-white text-center" :style="{ backgroundColor: themeColor }">Delete</th> 
-                    <th class="text-uppercase font-weight-bold text-white text-center" :style="{ backgroundColor: themeColor }">Edit</th>
+                    <th 
+                        class="text-uppercase font-weight-bold text-white text-center" 
+                        :style="{ backgroundColor: themeColor }"
+                    >
+                    Delete
+                    </th> 
+                    <th 
+                        class="text-uppercase font-weight-bold text-white text-center" 
+                        :style="{ backgroundColor: themeColor }"
+                    >
+                    Edit
+                    </th>
+                    <th 
+                        class="text-uppercase font-weight-bold text-white text-center" 
+                        :style="{ backgroundColor: themeColor }"
+                    >
+                    Courses
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -43,11 +59,32 @@ const emit = defineEmits(['next', 'prev', 'request-delete', 'request-update'])
                     <td>{{ row.departmentInfo?.name || 'N/A' }}</td>
                     
                     <td class="text-center">
-                        <v-btn icon="mdi-delete" color="error" variant="text" @click="$emit('request-delete', row)" />
+                        <v-btn 
+                            icon="mdi-delete" 
+                            color="error" 
+                            variant="text"
+                            :disabled="authStore.user?.role !== 'admin'"
+                            @click="$emit('request-delete', row)"
+                        />
                     </td>
                     <td class="text-center">
-                        <v-btn icon="mdi-pencil" color="success" variant="text" @click="$emit('request-update', row)" />
+                        <v-btn 
+                        icon="mdi-pencil" 
+                        color="success" 
+                        variant="text" 
+                        @click="$emit('request-update', row)" 
+                    />
+                    </td class="text-center">
+                    <td>
+                        <v-btn 
+                        icon="mdi-eye" 
+                        color="primary" 
+                        variant="text"
+                        title="View Enrolled Courses"
+                        @click="$emit('view-courses', row)"
+                    />
                     </td>
+                    
                 </tr>
             </tbody>
         </v-table>

@@ -36,7 +36,6 @@ onMounted(async () => {
         if (result.success) {
             studentData.value = result.data
         } else {
-            alert(result.error || "Student not found")
             router.push('/studentdata')
         }
     }

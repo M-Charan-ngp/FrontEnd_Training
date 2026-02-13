@@ -25,53 +25,52 @@ const handleLogout = () => {
 const navigateToTable = () => {
   router.push('/studentdata')
 }
+const navigateToEnrollment = () => {
+  router.push('/Enrollment')
+}
 const navigateToForm = () => {
   router.push('/student-form')
 }
 </script>
-
-<template >
-  <v-app-bar :color="themeColor" >
+<template>
+  <v-app-bar :color="themeColor" flat border-b>
     
-    <v-btn 
-      variant="outlined" 
-      class="ml-2"
-      rounded="pill"
-      @click="navigateToTable"
-    >
-      View Student
-    </v-btn>
-    <v-btn 
-      variant="outlined" 
-      class="ml-2"
-      rounded="pill"
-      @click="navigateToForm"
-    >
-      Create Student
-    </v-btn>
+    <div v-if="isLoggedIn" class="d-flex align-center ml-2" style="z-index: 2;">
+      <v-tabs v-model="activeTab" bg-color="transparent" slider-color="white" color="white" density="compact">
+        <v-tab to="/studentdata" class="text-capitalize px-3">Students</v-tab>
+        <v-tab to="/student-form" class="text-capitalize px-3">Create</v-tab>
+        <v-tab to="/Enrollment" class="text-capitalize px-3">Enrollment</v-tab>
+      </v-tabs>
+    </div>
 
-    <v-app-bar-title class="text-center mr-16 text-h4">
-      {{ title }}
-    </v-app-bar-title>
-      <v-btn 
-      v-if="isLoggedIn"
-      icon="mdi-logout" 
-      
-      class="ml-2 mr-2"
-      variant="outlined" 
-      @click="handleLogout"
-    >
-    </v-btn>
-    <v-btn 
-      icon="mdi-theme-light-dark" 
-      class="mr-2 ml-16"
-      variant="outlined"
-      @click="toggleTheme"
-      tooltip="Switch Theme"
-    >
-    
-    </v-btn>
+    <div class="d-flex justify-center align-center position-absolute w-100 h-100 pointer-events-none" style="left: 0; z-index: 1;">
+      <v-app-bar-title class="text-h5 font-weight-bold text-center" style="flex: none;">
+        {{ title }}
+      </v-app-bar-title>
+    </div>
+
+    <v-spacer />
+
+    <div class="d-flex align-center mr-2" style="z-index: 2;">
+      <v-btn icon density="comfortable" variant="text" @click="toggleTheme">
+        <v-icon>mdi-theme-light-dark</v-icon>
+        <v-tooltip activator="parent" location="bottom">Switch Theme</v-tooltip>
+      </v-btn>
+
+      <v-btn v-if="isLoggedIn" icon density="comfortable" variant="tonal" class="ml-2" @click="handleLogout">
+        <v-icon>mdi-logout</v-icon>
+        <v-tooltip activator="parent" location="bottom">Logout</v-tooltip>
+      </v-btn>
+    </div>
     
   </v-app-bar>
 </template>
 
+<style scoped>
+.pointer-events-none {
+  pointer-events: none;
+}
+.v-app-bar-title {
+  pointer-events: auto;
+}
+</style>

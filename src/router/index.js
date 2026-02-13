@@ -5,6 +5,7 @@ import CounterView from '@/views/CounterView.vue'
 import viewStudent from '@/views/viewStudent.vue'
 import LoginPage from '@/views/LoginPage.vue'
 import ShoppingCart from '../views/ShoppingCart.vue'
+import EnrollmentPage from '../views/EnrollmentPage.vue'
 import { authMiddleware, adminMiddleware } from '../middlewares/middleware'
 
 const router = createRouter({
@@ -45,6 +46,12 @@ const router = createRouter({
       path: '/cart',
       name: 'ShoppingCart',
       component: ShoppingCart,
+      beforeEnter: [authMiddleware]
+    },
+    {
+      path: '/enrollment',
+      name: 'Enrollment',
+      component: EnrollmentPage,
       beforeEnter: [authMiddleware]
     }
   ],

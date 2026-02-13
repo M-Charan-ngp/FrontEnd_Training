@@ -1,78 +1,92 @@
 import { defineStore } from 'pinia'
+import { ref, watch } from 'vue'
 import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 import apiService from '../services/apiServices'
 
-export const useAuthStore = defineStore('auth', {
-  state: () => ({
-    token: Cookies.get('auth_token') || null,
-    user: null, 
-    themeColor: localStorage.getItem('app_theme') || '#42b883'
-  }),
+export const useAuthStore = defineStore('auth', () => {
+    const token = ref(Cookies.get('auth_token') || null)
+    const user = ref(null)
+    const themeColor = ref(localStorage.getItem('app_theme') || '#42b883')
 
-  actions: {
-    init() {
-      if (this.token) {
+    const decodeAndSetUser = (tokenValue) => {
         try {
-          this.user = jwtDecode(this.token)
+            user.value = jwtDecode(tokenValue)
         } catch (e) {
-          this.logout()
+            console.error("Token decoding failed", e)
+            logout()
         }
-      }
-    },
-
-    saveLogin(token) {
-      if (typeof token !== 'string') return;
-      
-      this.token = token;
-      Cookies.set('auth_token', token, { expires: 7, sameSite: 'strict' });
-      
-      try {
-        this.user = jwtDecode(token);
-      } catch (error) {
-        console.error("Invalid token format", error);
-      }
-    },
-async login(credentials) {
-    try {
-        const response = await apiService.auth.login({ ...credentials });
-        const data = response.data; 
-        const token = data.token || data.data?.token;
-        if (!token) {
-            console.error("Token missing in response:", data);
-            return { success: false, error: "Token not received" };
-        }
-        this.saveLogin(token);
-        return { success: true, user: this.user };
-    } catch (err) {
-        console.error("Store Login Error:", err.response?.data || err);
-        return { success: false, error: err.response?.data?.message || "Login failed" };
     }
-},
 
-    async register(userData) {
-      try {
-        const response = await apiService.auth.signup(userData);
-        return { success: true, message: response.data?.message || 'Success' };
-      } catch (err) {
-        let message = "Registration failed";
-        if (err.response?.status === 422 || err.response?.status === 400) {
-            message = err.response.data?.message || "Email already registered";
+    const init = () => {
+        if (token.value) {
+            decodeAndSetUser(token.value)
         }
-        return { success: false, error: message };
-      }
-    },
-    logout() {
-      this.token = null
-      this.user = null
-      Cookies.remove('auth_token')
-      window.location.href = '/login'
-    },
-
-    setTheme(color) {
-      this.themeColor = color
-      localStorage.setItem('app_theme', color)
     }
-    
-  }
+
+    const saveLogin = (newToken) => {
+        if (typeof newToken !== 'string') return
+        
+        token.value = newToken
+        Cookies.set('auth_token', newToken, { expires: 7, sameSite: 'strict' })
+        decodeAndSetUser(newToken)
+    }
+
+    const login = async (credentials) => {
+        try {
+            const response = await apiService.auth.login({ ...credentials })
+            const data = response.data
+            const tokenReceived = data.token || data.data?.token
+            
+            if (!tokenReceived) {
+                return { success: false, error: "Token not received" }
+            }
+            
+            saveLogin(tokenReceived)
+            return { success: true, user: user.value }
+        } catch (err) {
+            return { 
+                success: false, 
+                error: err.response?.data?.message || "Login failed" 
+            }
+        }
+    }
+
+    const register = async (userData) => {
+        try {
+            const response = await apiService.auth.signup(userData)
+            return { success: true, message: response.data?.message || 'Success' }
+        } catch (err) {
+            let message = "Registration failed"
+            if (err.response?.status === 422 || err.response?.status === 400) {
+                message = err.response.data?.message || "Email already registered"
+            }
+            return { success: false, error: message }
+        }
+    }
+
+    const logout = () => {
+        token.value = null
+        user.value = null
+        Cookies.remove('auth_token')
+        window.location.href = '/login'
+    }
+
+    const setTheme = (color) => {
+        themeColor.value = color
+        localStorage.setItem('app_theme', color)
+    }
+
+    init()
+
+    return {
+        token,
+        user,
+        themeColor,
+        login,
+        register,
+        logout,
+        setTheme,
+        init
+    }
 })

@@ -8,16 +8,31 @@ const apiService = {
 
     students: {
         getAll: (params) => api.get('api/students', { params }),
-        getOne: (id) => api.get(`api/students/${id}`),
+        getOne(id, params) {
+            return api.get(`/api/students/${id}`, { params })
+        },
         create: (data) => api.post('api/students', data),
         update: (id, data) => api.put(`api/students/${id}`, data),
         delete: (id) => api.delete(`api/students/${id}`)
     },
     departments: {
-    getAll: () => api.get('api/departments', { 
-        params: { page: 1, limit: 100, sortBy: 'name', sortOrder: 'asc' } 
-    })
-}
+        getAll: () => api.get('api/departments', { 
+            params: { page: 1, limit: 100, sortBy: 'name', sortOrder: 'asc' } 
+        })
+    },
+    courses: {
+        getAll(params) {
+            return api.get('/api/courses', { params })
+        }
+    },
+    enrollment: {
+        assignCourseToStudent(payload) {
+            return api.post('/api/enroll', payload)
+        },
+        assignBulkStudentsToCourse(courseId, studentIds) {
+            return api.post(`/api/courses/${courseId}/enroll-students`, { studentIds })
+        }
+    }
 };
 
 export default apiService;

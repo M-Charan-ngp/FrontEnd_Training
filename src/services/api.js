@@ -46,19 +46,22 @@ api.interceptors.response.use(
                     break;
 
                 case 403:
-                    alert("Access Denied: You do not have permission for this.");
+                    alert("Backend Access Denied: You do not have permission for this.");
                     break;
 
                 case 404:
-                    console.error("Resource not found (404).");
+                    alert("Backend: The accessed resource not found")
+                    console.error("Backend: Resource not found (404).");
                     break;
 
                 case 422:
+                    alert("Backend: Validation Failed (422).");
                     console.error("Validation failed:", response.data.errors);
                     break;
 
                 case 500:
-                    alert("Internal Server Error (500).");
+                    alert("Backend: Internal Server Error (500)).");
+                    alert("Backend: Internal Server Error (500).");
                     break;
             }
         } else {
