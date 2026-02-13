@@ -3,11 +3,13 @@
 import { useStudentStore } from '../stores/student'
 import { ref, provide, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-const store = useStudentStore()
 import FormComponent from '@/components/FormComponent.vue'
+import { useAuthStore } from '../stores/AuthStore'
+const store = useStudentStore()
 
 
-const themeColor = ref('#42b883')
+const authStore = useAuthStore()
+const themeColor = computed(() => authStore.themeColor)
 const isEditMode = ref(false)
 const dynamicTitle = computed(() => isEditMode.value ? 'Edit Student' : 'Add Student')
 provide('themeColor',themeColor)
@@ -17,37 +19,45 @@ const route = useRoute()
 const router = useRouter()
 
 const studentData = ref({
-    reg_no: '',
+    regNo: '',   
     name: '',
     gender: '',
     dob: '',
     phone: '',
     email: '',
-    course: ''
+    departmentId: null 
 })
 
-onMounted(() => {
+onMounted(async () => {
     const id = route.params.id
     if (id) {
-        const existing = store.studentList.find(s => s.id === parseInt(id))
-        if (existing) {
-            studentData.value = JSON.parse(JSON.stringify(existing))
-            isEditMode.value = true
+        isEditMode.value = true
+        const result = await store.fetchStudentById(id)
+        if (result.success) {
+            studentData.value = result.data
+        } else {
+            alert(result.error || "Student not found")
+            router.push('/studentdata')
         }
     }
 })
 
 
-const onFormSubmit = () => {
+const onFormSubmit = async () => {
+    let result;
+    
     if (isEditMode.value) {
-
-      store.updateStudent(studentData.value)
-      alert("Student updated!")
+        result = await store.updateStudent(route.params.id, studentData.value)
     } else {
-      store.addStudent(studentData.value)
-        alert("Student added!")
+        result = await store.addStudent(studentData.value)
     }
-    router.push('/studentdata')
+
+    if (result.success) {
+        alert(isEditMode.value ? "Student updated!" : "Student added!")
+        router.push('/studentdata')
+    } else {
+        alert("Error: " + (result.error || "Something went wrong"))
+    }
 }
 </script>
 

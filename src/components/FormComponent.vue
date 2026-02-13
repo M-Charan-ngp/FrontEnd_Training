@@ -1,7 +1,12 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, onMounted } from 'vue'
 import Header from '@/components/Header.vue'
+import { useDepartmentStore } from '../stores/department'
 
+const deptStore = useDepartmentStore()
+onMounted(() => {
+    deptStore.fetchDepartments()
+})
 const emit = defineEmits(['submit'])
 const student = defineModel({ required: true })
 const form = ref(null) 
@@ -46,7 +51,7 @@ const handleSubmit = async () => {
         <v-form ref="form" @submit.prevent="handleSubmit">
             <v-text-field
                 label="Register Number"
-                v-model="student.reg_no"
+                v-model="student.regNo"
                 :rules="[rules.required, rules.regNo]"
                 variant="outlined"
             />
@@ -107,12 +112,11 @@ const handleSubmit = async () => {
             />
 
             <v-select
-                label="Course"
-                v-model="student.course"
-                :items="['MCA', 'MSC', 'MBA', 'MTech', 'ME', 'BTech', 'BE']"
-                :rules="[rules.required]"
-                variant="outlined"
-            />
+            label="Select Department"
+            :items="deptStore.departmentOptions"
+            v-model="student.departmentId"
+            :loading="deptStore.isLoading"
+        ></v-select>
 
             <v-btn 
                 type="submit" 

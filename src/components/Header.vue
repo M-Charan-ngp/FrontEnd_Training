@@ -12,7 +12,8 @@ const isLoggedIn = computed(() => {
 const title = inject('title') || "WELCOME"
 const themeColor = computed(() => authStore.themeColor)
 const toggleTheme = () => {
-    themeColor.value = themeColor.value === '#42b883' ? '#35495e' : '#42b883'
+    const nextColor = authStore.themeColor === '#42b883' ? '#35495e' : '#42b883'
+    authStore.setTheme(nextColor)
 }
 
 const handleLogout = () => {

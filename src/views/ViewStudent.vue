@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from 'vue'
+import {onMounted, ref} from 'vue'
 import { useStudentStore } from '../stores/student'
 import FilterHeader from '@/components/FilterHeader.vue'
 import Dialog from '@/components/Dialog.vue'
@@ -14,9 +14,15 @@ const handleUpdateRequest = (student) => {
         name: 'StudentForm', 
         params: { id: student.id } 
     })
-}  
-const goToNextPage = () => {
+}
+const goToNextPage = async () => {
     store.page++;
+    await store.fetchStudents(); 
+}
+
+const goToPrevPage = async () => {
+    store.page--;
+    await store.fetchStudents();
 }
 const isDeleteDialogOpen = ref(false)
 const selectedStudent = ref(null)
@@ -32,12 +38,20 @@ const handleConfirmDelete = (student) => {
 
 const updateFilters = (filter) => {
     store.search = filter.search
-    store.Sort = filter.sortBy
+    store.sortBy = filter.sortBy 
+    store.page = 1 
+    store.fetchStudents()
 }
 
-const goToPrevPage = () => {
-    store.page--;
-}
+onMounted(async () => {
+        try {
+            store.fetchStudents()
+        } catch (error) {
+            console.error("Could not load students:", error)
+            alert("Students not found")
+            router.push('/studentdata')
+        }
+})
 const tableHeaders = ['id', 'Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mobile No', 'E-mail', 'Course']
 </script>
 
@@ -57,9 +71,9 @@ const tableHeaders = ['id', 'Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mo
             @request-update="handleUpdateRequest"
         >
             <template #pagination="" class="paginate">
-                <button @click="goToPrevPage" :disabled="store.page <= 0" class="page-btn">Prev</button>
-                <span class="page-text">Page {{ store.page + 1 }} of {{ store.totalPages }}</span>
-                <button @click="goToNextPage" :disabled="store.page >= store.totalPages - 1" class="page-btn">Next</button>
+                <button @click="goToPrevPage" :disabled="store.page <= 1" class="page-btn">Prev</button>
+                <span class="page-text">Page {{ store.page }} of {{ store.totalPages }}</span>
+                <button @click="goToNextPage" :disabled="store.page >= store.totalPages" class="page-btn">Next</button>
             </template>
     </TableComponent>
     <Dialog 
@@ -73,7 +87,7 @@ const tableHeaders = ['id', 'Reg Number', 'Name', 'Gender', 'Date of Birth', 'Mo
     
         <template #default="{ item }">
             Are you sure you want to delete <b>{{ item.name }}</b>? 
-            This will remove them from the {{ item.course }} course list.
+            This will remove them from the <strong>{{ item.departmentInfo?.name }}</strong> department records.
         </template>
     </Dialog>
     

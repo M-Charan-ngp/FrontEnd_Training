@@ -29,24 +29,20 @@ const emit = defineEmits(['next', 'prev', 'request-delete', 'request-update'])
             </thead>
             <tbody>
                 <tr v-for="row in data" :key="row.id">
-                    <td v-for="(value, key) in row" :key="key" class="text-truncate" style="max-width: 200px;">
-                        {{ value }}
+                    <td>{{ row.id }}</td>
+                    <td class="font-weight-bold">{{ row.regNo }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.gender }}</td>
+                    <td>{{ row.dob ? row.dob.split('T')[0] : '' }}</td>
+                    <td>{{ row.phone }}</td>
+                    <td>{{ row.email }}</td>
+                    <td>{{ row.departmentInfo?.name || 'N/A' }}</td>
+                    
+                    <td class="text-center">
+                        <v-btn icon="mdi-delete" color="error" variant="text" @click="$emit('request-delete', row)" />
                     </td>
                     <td class="text-center">
-                        <v-btn 
-                            icon="mdi-delete" 
-                            color="error" 
-                            variant="text" 
-                            @click="$emit('request-delete', row)" 
-                        />
-                    </td>
-                    <td class="text-center">
-                        <v-btn 
-                            icon="mdi-pencil" 
-                            color="success" 
-                            variant="text" 
-                            @click="$emit('request-update', row)" 
-                        />
+                        <v-btn icon="mdi-pencil" color="success" variant="text" @click="$emit('request-update', row)" />
                     </td>
                 </tr>
             </tbody>

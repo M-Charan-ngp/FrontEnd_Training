@@ -1,88 +1,104 @@
 import { defineStore } from 'pinia'
-import { ref, computed,reactive } from 'vue'
+import { ref, computed } from 'vue'
+import apiService from '../services/apiServices'
 
 export const useStudentStore = defineStore('student', () => {
-    const studentList = reactive([
-        { id:1, reg_no: "24MCA0051", name: "Charan M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
-        { id:2, reg_no: "24MCA0052", name: "Sanjay M", gender: "Male", dob: "2003-09-09", phone: "9876544211", email: "sanjay@gmail.com", course: "MSC" },
-        { id:3, reg_no: "24MCA0053", name: "Rajesh M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "rajesh@gmail.com", course: "MCA" },
-        { id:4, reg_no: "24MCA0054", name: "Amal M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
-        { id:5, reg_no: "24MCA0055", name: "Gokul M", gender: "Male", dob: "2003-09-09", phone: "9876544211", email: "sanjay@gmail.com", course: "MSC" },
-        { id:6, reg_no: "24MCA0056", name: "jackie chan", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "rajesh@gmail.com", course: "MCA" },
-        { id:7, reg_no: "24MCA0057", name: "Velan M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
-        { id:8, reg_no: "24MCA0058", name: "Ram M", gender: "Male", dob: "2003-09-09", phone: "9876544211", email: "sanjay@gmail.com", course: "MSC" },
-        { id:9, reg_no: "24MCA0059", name: "Sam M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "rajesh@gmail.com", course: "MCA" },
-        { id:10, reg_no: "24MCA0060", name: "Ganesh M", gender: "Male", dob: "2003-09-09", phone: "9876544210", email: "charan@gmail.com", course: "MCA" },
-    ])
-    const page = ref(0)
+    const students = ref([])
+    const totalItems = ref(0)
+    const page = ref(1) 
     const limit = ref(5)
-     const search = ref('')
-     const Sort = ref('reg_no')
-    const addStudent = (student) => {
-        const nextId = studentList.length > 0 
-            ? Math.max(...studentList.map(s => s.id)) + 1 
-            : 1
+    const search = ref('')
+    const sortBy = ref('regNo')
+    const sortOrder = ref('asc')
+    const isLoading = ref(false)
+
+    const fetchStudents = async () => {
+        isLoading.value = true
+        try {
+            const params = {
+                page: page.value,
+                limit: limit.value,
+                search: search.value,
+                sortBy: sortBy.value,
+                sortOrder: sortOrder.value,
+                department: true 
+            }
             
-        studentList.push({ id: nextId,...student })
+            const response = await apiService.students.getAll(params)
+            students.value = response.data.data.items
+            totalItems.value = response.data.data.meta.total
+        } catch (error) {
+            console.error("Failed to fetch students:", error)
+        } finally {
+            isLoading.value = false
+        }
     }
 
-    const updateStudent = (updatedStudent) => {
-        const index = studentList.findIndex(s => s.id === updatedStudent.id)
-        if (index !== -1) {
-            studentList[index] = { ...updatedStudent }
+    const fetchStudentById = async (id) => {
+        isLoading.value = true
+        try {
+            const response = await apiService.students.getOne(id)
+            let studentData = response.data.data
+            if (studentData.dob && studentData.dob.includes('T')) {
+                studentData.dob = studentData.dob.split('T')[0]
+            }
+            return { success: true, data: studentData }
+        } catch (error) {
+            return { success: false, error: error.response?.data?.message }
+        } finally {
+            isLoading.value = false
         }
     }
-    const removeStudent = (studentId) => {
-        const index = studentList.findIndex(student => student.id === studentId);
-        if (index !== -1) {
-            studentList.splice(index, 1);
+
+    const addStudent = async (studentData) => {
+        try {
+            await apiService.students.create(studentData)
+            await fetchStudents() 
+            return { success: true }
+        } catch (error) {
+            return { success: false, error: error.response?.data?.message }
         }
-    };
+    }
+
+    const updateStudent = async (id, updatedData) => {
+        try {
+            await apiService.students.update(id, updatedData)
+            await fetchStudents() 
+            return { success: true }
+        } catch (error) {
+            return { success: false, error: error.response?.data?.message }
+        }
+    }
+
+    const removeStudent = async (id) => {
+        try {
+            await apiService.students.delete(id)
+            await fetchStudents() // Refresh list
+        } catch (error) {
+            console.error("Failed to delete student:", error)
+        }
+    }
 
     const totalPages = computed(() => {
-        const totalStudents = filteredList.value.length; 
-        const size = limit.value;
-        const pages = Math.ceil(totalStudents / size);
-        return pages > 0 ? pages : 1;
+        return Math.ceil(totalItems.value / limit.value) || 1
     })
 
-    const filteredList = computed(() => {
-        page.value = 0
-        let list = [...studentList]
-        if (search.value) {
-            const q = search.value.toLowerCase()
-            list = list.filter(s => 
-                s.name.toLowerCase().includes(q)||
-                s.reg_no.toLowerCase().includes(q)
-            )
-        }
-        list.sort((a, b) => {
-            let valA = a[Sort.value] ? a[Sort.value].toString().toLowerCase() : ''
-            let valB = b[Sort.value] ? b[Sort.value].toString().toLowerCase() : ''
-            
-            if (valA < valB) return -1
-            if (valA > valB) return 1
-            return 0
-        })
-        return list
-    })
-
-    const paginatedList = computed(() => {
-    const start = page.value * limit.value;
-    const end = start + limit.value;
-    return filteredList.value.slice(start, end);
-});
+    const paginatedList = computed(() => students.value)
 
     return {
-        studentList,
-        updateStudent,
-        removeStudent,
-        search,
-        Sort, 
-        addStudent,
+        students,
         page,
+        limit,
+        search,
+        sortBy,
+        sortOrder,
+        isLoading,
         totalPages,
         paginatedList,
-        filteredList,
+        fetchStudentById,
+        fetchStudents,
+        addStudent,
+        updateStudent,
+        removeStudent
     }
 })

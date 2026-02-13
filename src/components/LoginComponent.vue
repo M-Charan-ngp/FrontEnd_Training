@@ -1,7 +1,10 @@
 <script setup>
 import { vFocus, vCapitalize } from '@/composables/custom_directives.js'
+import { useAuthStore } from '../stores/AuthStore'
 const emit = defineEmits(['success'])
 const credentials = defineModel({ required: true })
+
+const authstore = useAuthStore()
 
 const emailrule = [
     value => {
